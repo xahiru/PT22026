@@ -36,6 +36,8 @@ and fake domains such as `paypa1-secure-login.xyz` are still flagged.
     python3 -m venv .venv
     source .venv/bin/activate
     pip install -r requirements.txt
+    mkdir -p data models
+
 
 ## Usage
     python train.py          
