@@ -9,7 +9,10 @@ import shap
 
 from features import FEATURE_NAMES, extract_features, normalize_url
 
-MODEL_PATH = "models/best_model.joblib"
+MODEL_PATH = next(
+    (p for p in ("models/best_model.joblib", "best_model.joblib") if os.path.exists(p)),
+    "models/best_model.joblib",
+)
 CONFIG_PATH = "config.json"  
 MAX_URL_LENGTH = 2000
 
