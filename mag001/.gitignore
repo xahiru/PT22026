@@ -20,7 +20,7 @@ ENV/
 *.h5
 
 # Evaluation outputs (generated at runtime)
-eval_outputs/
+# eval_outputs/
 
 # Hugging Face / datasets caches (if placed locally)
 .cache/
@@ -36,3 +36,6 @@ Thumbs.db
 # Environment files and logs
 .env
 *.log
+
+# Temporary files
+*.tmp
