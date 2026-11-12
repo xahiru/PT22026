@@ -6,6 +6,8 @@ Usage (from the ans082 folder, venv active):
 import argparse
 from pathlib import Path
 
+#iuoiuoiuii
+
 from PIL import Image, ImageOps
 
 MAX_SIDE = 1024
