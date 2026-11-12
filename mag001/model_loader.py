@@ -378,6 +378,7 @@ class HybridFoodClassifier(nn.Module):
                     "fused_global": fused_global,
                 }
             )
+<<<<<<< HEAD
         return output
 
 # ---------------------------------------------------------------------------
@@ -614,3 +615,6 @@ __all__ = [
     "HybridFoodClassifier",
     "load_model",
 ]
+=======
+        return output
+>>>>>>> main
