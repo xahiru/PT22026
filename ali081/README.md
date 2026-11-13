@@ -35,8 +35,8 @@ python -m venv .venv
 
 Activate it on Windows:
 
-```bash
-.venv\Scripts\activate
+```powershell
+.\.venv\Scripts\Activate.ps1
 ```
 
 On macOS or Linux:
@@ -131,8 +131,8 @@ training command above.
 **Batch analysis**
 
 1. Paste one review per line, or upload a `.csv` or `.txt` file.
-   For a `.csv`, use a column named `review` or `text`; otherwise the
-   first column is used. **Load sample reviews** fills in an example.
+   For a `.csv`, use a column named `review`, `text`, `comment`, or
+   `content` (case-insensitive); otherwise the first column is used. **Load sample reviews** fills in an example.
 2. Select **Analyze batch**.
 3. Read the summary charts and the results table, and download the
    full results as a CSV file.
@@ -213,13 +213,20 @@ section below.
 The original experiment used the Amazon portion of UCI's Sentiment
 Labelled Sentences dataset.
 
-After removing 13 duplicates, 987 sentences remained:
-690 training, 148 validation, and 149 test sentences.
+After normalized duplicate removal, 983 sentences remained:
+688 training, 147 validation, and 148 test sentences.
 
-Naive Bayes was selected using validation Macro F1 and retrained on
-838 training and validation sentences.
+Logistic Regression was selected using validation Macro F1 and retrained
+on 835 training and validation sentences. Its validation accuracy was
+82.99% and validation Macro F1 was 0.8298.
 
-It achieved 81.88% accuracy on its original 149-sentence test set.
+The saved baseline achieved 80.41% accuracy and 0.8036 Macro F1 on its
+original 148-sentence test set. The bootstrap 95% confidence interval
+for accuracy was 73.65% to 86.49%.
+
+These results are recorded in `results/test_metrics.json` and
+`results/test_classification_report.txt`. This small UCI test set is
+separate from the shared Amazon test sample below.
 
 ## Version 2 experiment
 
@@ -238,7 +245,9 @@ TF-IDF was fitted on training data only during model comparison.
 | Logistic Regression | 88.00% | 0.8799 |
 
 Logistic Regression was selected and retrained on all 19,993
-development reviews.
+development reviews. This validation comparison evaluates Naive Bayes
+and Logistic Regression; the shared test comparison below evaluates
+two saved Logistic Regression models trained with different data and settings.
 
 Final settings:
 
@@ -260,7 +269,7 @@ sample. Near-duplicates were not exhaustively checked.
 
 | Model | Test accuracy | Test Macro F1 |
 |---|---:|---:|
-| Version 1 — Naive Bayes | 70.86% | 0.7055 |
+| UCI baseline — Logistic Regression | 69.72% | 0.6936 |
 | Version 2 — Logistic Regression | 87.56% | 0.8754 |
 
 Version 2 correctly classified 4,378 of 5,000 reviews. A bootstrap 95%
@@ -276,9 +285,10 @@ confidence interval for its accuracy is 86.66% to 88.52%.
 | Negative | 0.8766 | 0.8642 | 0.8704 |
 | Positive | 0.8747 | 0.8862 | 0.8804 |
 
-The gain was 16.70 percentage points on this shared sample.
-Both the dataset and classifier changed, so this measures the complete
-system improvement rather than the effect of a single change.
+The gain was 17.84 percentage points on this shared sample.
+Both saved classifiers are Logistic Regression. The training data,
+feature settings, and classifier settings differ, so this comparison
+does not isolate the effect of training data alone.
 
 The training accuracy of Version 2 is much higher than its validation
 accuracy, so some overfitting remains.
@@ -308,6 +318,9 @@ datasets. Do not use the test sample to choose further model settings.
 | requirements.txt | Dependency versions |
 | README.md | Project documentation |
 | results/ | Evaluation tables and figures |
+| screenshots/ | Application screenshots |
+| batch_test.csv | Small batch input for functional testing |
+| .gitignore | Excludes local datasets, models, and temporary files |
 | data/ | Local datasets, excluded from Git |
 | models/ | Local models, excluded from Git |
 

@@ -1,6 +1,6 @@
 {
   "model_file": "sentiment_pipeline_v2.joblib",
-  "model_sha256": "b27248bc2bb352882a7ce1a4e3b69ec3e739b4e8b0b06f8ccea35357d169b256",
+  "model_sha256": "f7b1a2f56d578d92997dc436282abed6c61018714d7471bc093ee820c00116a2",
   "classifier": "LogisticRegression",
   "classifier_params": {
     "C": "10.0",
@@ -24,6 +24,6 @@
   "from_validation_split": 3999,
   "positive_share": 0.49327264542589905,
   "scikit_learn_version": "1.7.2",
-  "trained": "2026-11-12T16:24:26",
+  "trained": "2026-11-13T09:31:42",
   "note": "Fitted on training + validation data. Evaluate once on the untouched test set."
 }
