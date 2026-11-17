@@ -6,6 +6,7 @@ from pathlib import Path
 
 MODEL_DIR = Path("models/ingredient-ner")
 CHUNK_WORDS = 100  # must match the chunk size used in training
+STRIDE = 60        # chunks overlap by CHUNK_WORDS - STRIDE words
 MAX_LEN = 256      # must match the training setting
 
 # A word is a run of characters that are not spaces or punctuation;
@@ -44,6 +45,34 @@ def spans_from_tags(words, tags, text):
     return segments
 
 
+def chunk_starts(n_words, chunk=CHUNK_WORDS, stride=STRIDE):
+    """Start positions of overlapping chunks that cover every word."""
+    if n_words <= chunk:
+        return [0]
+    starts = list(range(0, n_words - chunk + 1, stride))
+    if starts[-1] + chunk < n_words:
+        starts.append(n_words - chunk)
+    return starts
+
+
+def merge_chunk_tags(n_words, starts, chunk_tags):
+    """Combine tags from overlapping chunks.
+
+    A word near a chunk edge has little context, so for every word we keep
+    the tag from the chunk in which the word is farthest from both edges.
+    """
+    tags = [0] * n_words
+    best = [-1] * n_words
+    for start, chunk in zip(starts, chunk_tags):
+        size = len(chunk)
+        for pos, tag in enumerate(chunk):
+            centrality = min(pos, size - 1 - pos)
+            if centrality > best[start + pos]:
+                best[start + pos] = centrality
+                tags[start + pos] = tag
+    return tags
+
+
 class IngredientExtractor:
     """Loads the trained model once and extracts ingredient lists."""
 
@@ -59,24 +88,27 @@ class IngredientExtractor:
     def predict_tags(self, words):
         """Predict one tag (0/1/2) for every word."""
         torch = self._torch
-        tags = [0] * len(words)
-        chunks = [list(range(i, min(i + CHUNK_WORDS, len(words))))
-                  for i in range(0, len(words), CHUNK_WORDS)]
-        for start in range(0, len(chunks), 16):  # small batches
-            batch = chunks[start:start + 16]
+        n_words = len(words)
+        starts = chunk_starts(n_words)
+        chunk_tags = []
+        for first in range(0, len(starts), 16):  # small batches
+            batch_starts = starts[first:first + 16]
+            chunks = [words[s:s + CHUNK_WORDS] for s in batch_starts]
             enc = self.tokenizer(
-                [[words[i][0] for i in chunk] for chunk in batch],
+                [[w[0] for w in chunk] for chunk in chunks],
                 is_split_into_words=True, truncation=True,
                 max_length=MAX_LEN, padding=True, return_tensors="pt")
             with torch.no_grad():
                 guesses = self.model(**enc).logits.argmax(dim=-1)
-            for b, chunk in enumerate(batch):
+            for b, chunk in enumerate(chunks):
+                tags = [0] * len(chunk)
                 previous = None
                 for pos, wid in enumerate(enc.word_ids(batch_index=b)):
                     if wid is not None and wid != previous:
-                        tags[chunk[wid]] = int(guesses[b, pos])
+                        tags[wid] = int(guesses[b, pos])
                     previous = wid
-        return tags
+                chunk_tags.append(tags)
+        return merge_chunk_tags(n_words, starts, chunk_tags)
 
     def extract(self, text):
         """Return the ingredient list(s) found in text as a single string."""
