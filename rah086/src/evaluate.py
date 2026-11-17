@@ -34,7 +34,7 @@ TEST_CASES = [
     ("Contains: peanul oil, sesarne seeds.",
      {"Peanuts", "Sesame"}),
     ("Biscuit: wheat flour, rnilk powder, salt.",
-     {"Gluten (cereals)"}),
+     {"Gluten (cereals)", "Milk"}),
     ("Noodles: wheat, soybean oil, hazelnul paste.",
      {"Gluten (cereals)", "Soy", "Tree nuts"}),
 ]
