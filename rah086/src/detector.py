@@ -33,10 +33,25 @@ ALLERGENS = {
 
 FUZZY_CUTOFF = 0.8  # similarity needed to accept an OCR-damaged word
 
+# Frequent OCR confusions: 'm' is often read as 'rn', and 'w' as 'vv'.
+OCR_FIXES = (("rn", "m"), ("vv", "w"))
+
 
 def tokenize(text):
     """Lowercase the text and split it into alphabetic words."""
     return re.findall(r"[a-z]+", text.lower())
+
+
+def tokenize_with_ocr_fixes(text):
+    """Tokenize the text, plus a copy with common OCR confusions repaired."""
+    fixed = text.lower()
+    for wrong, right in OCR_FIXES:
+        fixed = fixed.replace(wrong, right)
+    tokens = tokenize(text)
+    for tok in tokenize(fixed):
+        if tok not in tokens:
+            tokens.append(tok)
+    return tokens
 
 
 def detect_allergens(text, fuzzy_cutoff=FUZZY_CUTOFF):
@@ -54,7 +69,7 @@ def detect_allergens(text, fuzzy_cutoff=FUZZY_CUTOFF):
         return {}
 
     text_lower = text.lower()
-    tokens = tokenize(text)
+    tokens = tokenize_with_ocr_fixes(text)
     found = {}
 
     for allergen, keywords in ALLERGENS.items():
