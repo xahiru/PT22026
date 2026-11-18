@@ -1,11 +1,9 @@
 """Gradio app: AI-Powered Food Allergen Detection and Ingredient Risk Assistant."""
 
-from pathlib import Path
-
 import gradio as gr
 
 from src.detector import ALLERGENS
-from src.extractor import MODEL_DIR, IngredientExtractor
+from src.extractor import IngredientExtractor
 from src.ocr import extract_text
 from src.risk import assess_risk
 
@@ -19,10 +17,7 @@ ADVICE = {
 
 
 def load_extractor():
-    """Load the fine-tuned ingredient-list model if it is available."""
-    if not Path(MODEL_DIR).exists():
-        print(f"Model not found in {MODEL_DIR}: scanning the whole text instead.")
-        return None
+    """Load the fine-tuned ingredient-list model (local copy or Hugging Face)."""
     try:
         return IngredientExtractor()
     except Exception as exc:  # the app still works without the model

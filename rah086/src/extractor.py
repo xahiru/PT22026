@@ -4,7 +4,8 @@ ingredient list inside the raw OCR text of a whole food package."""
 import re
 from pathlib import Path
 
-MODEL_DIR = Path("models/ingredient-ner")
+MODEL_DIR = Path("models/ingredient-ner")        # local copy (after training)
+HUB_REPO = "mirwaisrahimi/ingredient-list-ner"   # published model on Hugging Face
 CHUNK_WORDS = 100  # must match the chunk size used in training
 STRIDE = 60        # chunks overlap by CHUNK_WORDS - STRIDE words
 MAX_LEN = 256      # must match the training setting
@@ -76,13 +77,20 @@ def merge_chunk_tags(n_words, starts, chunk_tags):
 class IngredientExtractor:
     """Loads the trained model once and extracts ingredient lists."""
 
-    def __init__(self, model_dir=MODEL_DIR):
+    def __init__(self, model_source=None):
+        """Load the model from the local folder, or from Hugging Face.
+
+        If no source is given, the local folder is used when it exists;
+        otherwise the model is downloaded from the Hugging Face Hub.
+        """
         import torch
         from transformers import AutoModelForTokenClassification, AutoTokenizer
 
+        if model_source is None:
+            model_source = MODEL_DIR if Path(MODEL_DIR).exists() else HUB_REPO
         self._torch = torch
-        self.tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
-        self.model = AutoModelForTokenClassification.from_pretrained(str(model_dir))
+        self.tokenizer = AutoTokenizer.from_pretrained(str(model_source))
+        self.model = AutoModelForTokenClassification.from_pretrained(str(model_source))
         self.model.eval()
 
     def predict_tags(self, words):
