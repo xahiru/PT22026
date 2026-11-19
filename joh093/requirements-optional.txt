@@ -1,0 +1,13 @@
+# ---------------------------------------------------------------------------
+# Optional dependency: enables the LSTM forecasting model.
+#
+# The core application runs without this file (naive / ridge / random forest /
+# gradient boosting). Install the CPU wheel to keep the install light:
+#
+#     pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+# or, from this file:
+#
+#     pip install -r requirements-optional.txt
+# ---------------------------------------------------------------------------
+torch>=2.6,<3

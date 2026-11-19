@@ -1,0 +1,2 @@
+# Fitted model weights are saved here during training but are git-ignored.
+# See .gitignore: *.pt, *.pth, *.bin and other checkpoint formats are excluded.

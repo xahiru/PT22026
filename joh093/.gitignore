@@ -1,0 +1,64 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+
+# --- Model weights and checkpoints (never committed) ----------------------
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.ckpt
+*.msgpack
+.huggingface/
+.cache/
+models/*
+!models/.gitkeep
+checkpoints/
+
+# --- Datasets (downloaded by scripts; only the tiny sample is committed) --
+data/*.csv
+!data/sample_aapl.csv
+data/*.zip
+data/*.npz
+data/raw/
+
+# --- Experiment output -----------------------------------------------------
+results/logs/
+results/tmp/
+*.log
+
+# --- Secrets ---------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# --- OS / editors ----------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+.ipynb_checkpoints/
+
+# --- Submission archive (built separately) ----------------------------------
+joh093_submission_*.zip
+
+# --- Test cache ------------------------------------------------------------
+.pytest_cache/

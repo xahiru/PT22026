@@ -1,0 +1,14 @@
+# ---------------------------------------------------------------------------
+# Stock Price Forecasting - runtime dependencies
+# Python 3.11+ (verified on Windows 11); CPU-only by default.
+# Install:  python -m venv .venv && . .venv/Scripts/activate && pip install -r requirements.txt
+# ---------------------------------------------------------------------------
+numpy>=1.26,<3
+pandas>=2.1
+scikit-learn>=1.4
+matplotlib>=3.8
+seaborn>=0.13
+yfinance>=0.2.40
+gradio>=5.0,<6
+PyYAML>=6.0
+pytest>=8.0
